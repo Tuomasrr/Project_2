@@ -1,13 +1,13 @@
-const theaterSelect = document.getElementById("theaterSelect");
+const theaterSelect = document.getElementById("theaterSelect");      
 const dateInput = document.getElementById("dateSelect");
-const searchInput = document.getElementById("searchInput");
-const container = document.getElementById("moviesContainer");
+const searchInput = document.getElementById("searchInput");       // All the HTML elements are here
+const container = document.getElementById("moviesContainer");               
 
-const today = new Date().toISOString().split("T")[0];
-dateInput.value = today;
+const today = new Date().toISOString().split("T")[0];   
+dateInput.value = today;       // Current day by default
 
-const eventDetails = {};
-let allShowElements = [];
+const eventDetails = {};      // Movie info
+let allShowElements = [];   
 
 const areaXhr = new XMLHttpRequest();  //Creates XMLHttpRequest to fetch list of all theatre areas
 areaXhr.open("GET", "https://www.finnkino.fi/xml/TheatreAreas/", true);
@@ -28,14 +28,14 @@ areaXhr.onreadystatechange = function () {
 };
 areaXhr.send();
 
-document.getElementById("loadBtn").addEventListener("click", function () {
+document.getElementById("loadBtn").addEventListener("click", function () {      // Function, when user press the Näytä esitykset button
     const area = theaterSelect.value;
     const date = dateInput.value.split("-").reverse().join(".");
     const scheduleUrl = `https://www.finnkino.fi/xml/Schedule/?area=${area}&dt=${date}`;
 
     container.innerHTML = "<p style='color: white;'>Ladataan esitykset...</p>";
 
-    const scheduleReq = new XMLHttpRequest();
+    const scheduleReq = new XMLHttpRequest();    // Moviedata for chosen area and date
     scheduleReq.open("GET", scheduleUrl, true);
     scheduleReq.onreadystatechange = function () {
         if (scheduleReq.readyState === 4 && scheduleReq.status === 200) {
@@ -44,7 +44,7 @@ document.getElementById("loadBtn").addEventListener("click", function () {
             const eventsToFetch = new Set();
             const showsData = [];
 
-            for (let i = 0; i < shows.length; i++) {
+            for (let i = 0; i < shows.length; i++) {        //Goes through all the shows and collects info
                 const show = shows[i];
                 const eventID = show.getElementsByTagName("EventID")[0].textContent;
                 const title = show.getElementsByTagName("Title")[0].textContent;
@@ -55,7 +55,7 @@ document.getElementById("loadBtn").addEventListener("click", function () {
                 showsData.push({ eventID, title, startTime, theater });
             }
 
-            const eventReq = new XMLHttpRequest();
+            const eventReq = new XMLHttpRequest();            //Gets movie infos inc. picture, info and trailer
             eventReq.open("GET", `https://www.finnkino.fi/xml/Events/?includeVideos=true`, true);
             eventReq.onreadystatechange = function () {
                 if (eventReq.readyState === 4 && eventReq.status === 200) {
@@ -70,18 +70,18 @@ document.getElementById("loadBtn").addEventListener("click", function () {
                             let videoUrl = "";
                             if (videos.length > 0) {
                                 const ytId = videos[0].getElementsByTagName("Location")[0]?.textContent;
-                                if (ytId) videoUrl = `https://www.youtube.com/watch?v=${ytId}`;
+                                if (ytId) videoUrl = `https://www.youtube.com/watch?v=${ytId}`;       // trailer link to youtube site
                             }
                             eventDetails[id] = {
-                                image: ev.getElementsByTagName("EventLargeImagePortrait")[0]?.textContent || "",
-                                desc: ev.getElementsByTagName("ShortSynopsis")[0]?.textContent || "Ei kuvausta saatavilla.",
+                                image: ev.getElementsByTagName("EventLargeImagePortrait")[0]?.textContent || "",      // Movie picture
+                                desc: ev.getElementsByTagName("ShortSynopsis")[0]?.textContent || "Ei kuvausta saatavilla.",    // Movie info
                                 video: videoUrl
                             };
                         }
                     }
 
                     container.innerHTML = "";
-                    allShowElements = [];
+                    allShowElements = [];               // Shows retrieved info on the page
                     showsData.forEach(show => {
                         const detail = eventDetails[show.eventID] || { image: '', desc: '', video: '' };
                         const div = document.createElement("div");
@@ -111,7 +111,7 @@ document.getElementById("loadBtn").addEventListener("click", function () {
     scheduleReq.send();
 });
 
-searchInput.addEventListener("input", function () {
+searchInput.addEventListener("input", function () {          // Movie search
     const search = this.value.toLowerCase();
     allShowElements.forEach(item => {
         item.element.style.display = item.title.includes(search) ? "flex" : "none";
