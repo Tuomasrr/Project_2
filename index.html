@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fi">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Cheap copy of Finnkino</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <h1>🎬 Finnkino Esitykset</h1>
+
+  <div class="controls">     <!--Search controls for area, date and name of the movie-->
+    <label for="theaterSelect">Valitse teatteri:</label>
+    <select id="theaterSelect"></select>
+
+    <label for="dateSelect">Valitse päivämäärä:</label>
+    <input type="date" id="dateSelect" />
+
+    <label for="searchInput">Hae elokuvan nimellä:</label>
+    <input type="text" id="searchInput" placeholder="Etsi elokuvaa..." />
+
+    <button id="loadBtn">Näytä esitykset</button>     <!--Button for search-->
+  </div>
+
+  <div id="moviesContainer"></div>    <!--Container for all the movies from the search-->
+
+  <script src="script.js"></script>
+</body>
+
+</html>
